@@ -1,0 +1,22 @@
+##
+## BPNS configuration file. Lines beginning with # are comments.
+##
+
+# main_path = "/path/to/save/bpns/data"     # (Optional) Directory where data should be stored (default: ~/.bpns)
+
+[server]
+# http_addr = "127.0.0.1:50055"             # (Optional) The address of BPNS Server API. Warning: 0.0.0.0 is probably a bad idea! (default: 127.0.0.1:50055)
+
+[bitcoin]
+# rpc_addr = "127.0.0.1:8332"               # (Optional) Bitcoin Core RPC host and port (default: 127.0.0.1:8332)
+rpc_username = "yourusername"               # Bitcoin Core RPC username
+rpc_password = "yourpassword"               # Bitcoin Core RPC password
+
+# [matrix]
+# homeserver_url = "http://localhost:8008"  # Your local, onion or clearnet homeserver url
+# proxy = "socks5h://127.0.0.1:9050"        # (Optional) Needed if you want use onion homeserver url (default: None)
+# user_id = "@username:example.com"         # Matrix Bot user_id
+# password = "yourpassword"                 # Matrix Bot password
+
+# [telegram]
+# bot_token = "yourbottoken"                # Telegram Bot Token

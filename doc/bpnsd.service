@@ -1,0 +1,14 @@
+[Unit]
+Description=BPNS Daemon
+
+[Service]
+ExecStart=/usr/local/bin/bpnsd
+User=<yourusername>
+Group=<yourgroup>
+Type=simple
+KillMode=process
+Restart=always
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target
