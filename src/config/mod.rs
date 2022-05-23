@@ -5,7 +5,7 @@ mod model;
 
 pub(crate) use model::Config;
 
-use std::net::{SocketAddr, ToSocketAddrs};
+use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 use std::path::{Path, PathBuf};
 
 use clap::Parser;
@@ -33,19 +33,10 @@ fn default_config_file() -> PathBuf {
     default
 }
 
-fn str_to_socketaddr(address: &str, what: &str) -> SocketAddr {
-    address
-        .to_socket_addrs()
-        .unwrap_or_else(|_| panic!("unable to resolve {} address", what))
-        .collect::<Vec<_>>()
-        .pop()
-        .unwrap()
-}
-
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
 struct Args {
-    #[clap(short, long, parse(from_os_str))]
+    #[clap(long("conf"), name("config_file"), parse(from_os_str))]
     config_file: Option<PathBuf>,
 }
 
@@ -66,21 +57,7 @@ impl Config {
             }
         };
 
-        let main_path: PathBuf = match config_file.main_path {
-            Some(path) => path,
-            None => default_dir(),
-        };
-
-        #[cfg(feature = "server")]
-        let server_http_addr: SocketAddr = match config_file.server.http_addr {
-            Some(addr) => addr,
-            None => str_to_socketaddr("127.0.0.1:50055", "HTTP Server"),
-        };
-
-        let bitcoin_rpc_addr: SocketAddr = match config_file.bitcoin.rpc_addr {
-            Some(addr) => addr,
-            None => str_to_socketaddr("127.0.0.1:8332", "Bitcoin RPC"),
-        };
+        let main_path: PathBuf = config_file.main_path.unwrap_or_else(|| default_dir());
 
         let config = Self {
             main_path: main_path.clone(),
@@ -90,10 +67,14 @@ impl Config {
             #[cfg(feature = "server")]
             server: Server {
                 enabled: config_file.server.enabled.unwrap_or(true),
-                http_addr: server_http_addr,
+                http_addr: config_file.server.http_addr.unwrap_or_else(|| {
+                    SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 50055)
+                }),
             },
             bitcoin: Bitcoin {
-                rpc_addr: bitcoin_rpc_addr,
+                rpc_addr: config_file.bitcoin.rpc_addr.unwrap_or_else(|| {
+                    SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 8332)
+                }),
                 rpc_username: config_file.bitcoin.rpc_username,
                 rpc_password: config_file.bitcoin.rpc_password,
             },
