@@ -20,8 +20,9 @@ The following feature flags are available:
 
 | Feature             | Default | Description                                                           |
 | ------------------- | :-----: | --------------------------------------------------------------------- |
-| `matrix`            |   No    | Enable [Matrix](https://matrix.org) Bot                              |
-| `server`            |   Yes   | Server API                                                            |
+| `matrix`            |   No    | Enable [Matrix](https://matrix.org) Bot                               |
+| `server`            |   Yes   | Enable Server API                                                     |
+| `telegram`          |   No    | Enable [Telegram](https://telegram.org) Bot                           |
 
 ### Examples
 

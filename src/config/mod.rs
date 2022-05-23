@@ -15,6 +15,8 @@ use dirs::home_dir;
 use model::Matrix;
 #[cfg(feature = "server")]
 use model::Server;
+#[cfg(feature = "telegram")]
+use model::Telegram;
 use model::{Bitcoin, ConfigFile, Core};
 
 fn default_dir() -> PathBuf {
@@ -87,6 +89,7 @@ impl Config {
             },
             #[cfg(feature = "server")]
             server: Server {
+                enabled: config_file.server.enabled.unwrap_or(true),
                 http_addr: server_http_addr,
             },
             bitcoin: Bitcoin {
@@ -96,12 +99,19 @@ impl Config {
             },
             #[cfg(feature = "matrix")]
             matrix: Matrix {
+                enabled: config_file.matrix.enabled.unwrap_or(false),
                 db_path: main_path.join("matrix/db"),
                 state_path: main_path.join("matrix/state"),
                 homeserver_url: config_file.matrix.homeserver_url,
                 proxy: config_file.matrix.proxy,
                 user_id: config_file.matrix.user_id,
                 password: config_file.matrix.password,
+            },
+            #[cfg(feature = "telegram")]
+            telegram: Telegram {
+                enabled: config_file.telegram.enabled.unwrap_or(false),
+                db_path: main_path.join("telegram/db"),
+                bot_token: config_file.telegram.bot_token,
             },
         };
 

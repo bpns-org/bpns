@@ -23,11 +23,13 @@ pub struct Matrix;
 
 impl Matrix {
     pub fn run() {
-        thread::spawn("matrix_bot", {
-            move || {
-                run();
-            }
-        });
+        if CONFIG.matrix.enabled {
+            thread::spawn("matrix_bot", {
+                move || {
+                    run();
+                }
+            });
+        }
     }
 }
 

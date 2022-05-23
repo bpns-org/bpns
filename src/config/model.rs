@@ -13,12 +13,14 @@ pub struct Core {
 #[cfg(feature = "server")]
 #[derive(Deserialize)]
 pub struct Server {
+    pub enabled: bool,
     pub http_addr: SocketAddr,
 }
 
 #[cfg(feature = "server")]
 #[derive(Deserialize)]
 pub struct ConfigFileServer {
+    pub enabled: Option<bool>,
     pub http_addr: Option<SocketAddr>,
 }
 
@@ -39,6 +41,7 @@ pub struct ConfigFileBitcoin {
 #[cfg(feature = "matrix")]
 #[derive(Deserialize)]
 pub struct Matrix {
+    pub enabled: bool,
     pub db_path: PathBuf,
     pub state_path: PathBuf,
     pub homeserver_url: String,
@@ -50,10 +53,26 @@ pub struct Matrix {
 #[cfg(feature = "matrix")]
 #[derive(Deserialize)]
 pub struct ConfigFileMatrix {
+    pub enabled: Option<bool>,
     pub homeserver_url: String,
     pub proxy: Option<String>,
     pub user_id: String,
     pub password: String,
+}
+
+#[cfg(feature = "telegram")]
+#[derive(Deserialize)]
+pub struct Telegram {
+    pub enabled: bool,
+    pub db_path: PathBuf,
+    pub bot_token: String,
+}
+
+#[cfg(feature = "telegram")]
+#[derive(Deserialize)]
+pub struct ConfigFileTelegram {
+    pub enabled: Option<bool>,
+    pub bot_token: String,
 }
 
 #[derive(Debug, Deserialize)]
@@ -65,6 +84,8 @@ pub struct Config {
     pub bitcoin: Bitcoin,
     #[cfg(feature = "matrix")]
     pub matrix: Matrix,
+    #[cfg(feature = "telegram")]
+    pub telegram: Telegram,
 }
 
 #[derive(Deserialize)]
@@ -75,6 +96,8 @@ pub struct ConfigFile {
     pub bitcoin: ConfigFileBitcoin,
     #[cfg(feature = "matrix")]
     pub matrix: ConfigFileMatrix,
+    #[cfg(feature = "telegram")]
+    pub telegram: ConfigFileTelegram,
 }
 
 impl fmt::Debug for Core {
@@ -86,7 +109,11 @@ impl fmt::Debug for Core {
 #[cfg(feature = "server")]
 impl fmt::Debug for Server {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{{ http_addr: {} }}", self.http_addr)
+        write!(
+            f,
+            "{{ enabled: {}, http_addr: {} }}",
+            self.enabled, self.http_addr
+        )
     }
 }
 
@@ -105,8 +132,19 @@ impl fmt::Debug for Matrix {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "{{ db_path: {:?}, state_path: {:?}, homeserver_url: {}, proxy: {:?}, user_id: {} }}",
+            "{{ enabled: {}, db_path: {:?}, state_path: {:?}, homeserver_url: {}, proxy: {:?}, user_id: {} }}", self.enabled,
             self.db_path, self.state_path, self.homeserver_url, self.proxy, self.user_id
+        )
+    }
+}
+
+#[cfg(feature = "telegram")]
+impl fmt::Debug for Telegram {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "{{ enabled: {}, db_path: {:?} }}",
+            self.enabled, self.db_path
         )
     }
 }
